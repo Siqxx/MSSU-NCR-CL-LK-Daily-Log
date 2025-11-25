@@ -122,11 +122,15 @@ async function submitAttendance(action) {
     if (result.status === 'success') {
       alert(result.message);
 
-      if (action === 'TIME-IN') {
-        lkNameSelect.dataset.timeIn = true;
-        // Remove name from dropdown so they can't select again
-        lkNameSelect.querySelector(`option[value="${lkName}"]`).remove();
-      }
+     if (action === 'TIME-IN') {
+  lkNameSelect.dataset.timeIn = true;
+
+  // Safe removal of selected name from dropdown
+  const optionToRemove = lkNameSelect.querySelector(`option[value="${lkName}"]`);
+  if (optionToRemove) {
+    optionToRemove.remove();
+  }
+}
 
       if (action === 'TIME-OUT') {
         timeInBtn.disabled = true;
