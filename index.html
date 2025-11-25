@@ -1,0 +1,363 @@
+<!--
+MSSU NCR-CL Lighthouse Keepers Daily Log
+Single-file GitHub Pages-ready HTML + JS
+
+INSTRUCTIONS:
+1) Create a Google Sheet with a sheet named: Attendance
+   Columns (first row): Timestamp_ISO, Timestamp_PHT, Date, Action, Name, Purpose, LS, AOR, UserAgent
+2) Create a new Google Apps Script project, paste the APPS_SCRIPT section (below) into Code.gs, update SPREADSHEET_ID, and deploy as "Web app" -> Execute as: "Me", Who has access: "Anyone, even anonymous". Copy the Web App URL and paste it into the variable SCRIPT_URL in this HTML (replace the placeholder).
+3) Upload this file as index.html to your GitHub Pages repo (or use as a static page). It will talk to the Apps Script web app.
+
+NOTE: This file implements:
+- Philippine (Asia/Manila) timestamps
+- Time-In allowed for names not yet Time-In today
+- Time-Out allowed only for names who have Time-In but not yet Time-Out today
+- After successful submit, the relevant name is removed from that mode's dropdown so it can't be resubmitted
+- Time-In and Time-Out actions recorded to the Google Sheet via POST
+- A small GET endpoint (Apps Script) returns today's attendance so every device shows the shared state
+
+Replace the placeholder SCRIPT_URL with your Apps Script Web App URL.
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MSSU NCR-CL Lighthouse Keepers Daily Log</title>
+  <style>
+    :root{--blue:#0b62d1;--black:#000;--green:#0ea44a;--red:#d12b2b}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:#fff;margin:0;padding:24px;color:var(--black)}
+    .container{max-width:980px;margin:0 auto}
+    header{display:flex;align-items:center;gap:16px}
+    h1{font-size:20px;margin:0}
+    .card{background:var(--blue);color:var(--black);padding:18px;border-radius:8px;margin-top:16px;display:flex;flex-direction:column;gap:12px}
+    label{font-weight:600}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .field{flex:1;min-width:200px}
+    select,input[type=text]{width:100%;padding:10px;border-radius:6px;border:1px solid rgba(0,0,0,0.2);font-weight:700}
+    .buttons{display:flex;gap:12px;justify-content:center;margin-top:12px}
+    .big-btn{flex:1;padding:14px;border-radius:10px;border:3px solid var(--black);font-weight:900;letter-spacing:1px;font-size:18px;cursor:pointer}
+    .timein{background:linear-gradient(0deg,var(--green),#79d59a);}
+    .timeout{background:linear-gradient(0deg,var(--red),#e07b7b);}
+    .disabled{opacity:0.5;pointer-events:none}
+    .muted{opacity:0.85;font-weight:700}
+    .note{font-size:13px;opacity:0.9}
+    .status{display:flex;gap:8px;align-items:center}
+    .submitted{background:#e9e9e9;border:2px dashed #bbb;padding:10px;border-radius:6px;text-align:center;font-weight:800}
+    footer{margin-top:18px;font-size:13px}
+    .lower-row{display:flex;gap:12px;align-items:center}
+    @media(max-width:720px){.row{flex-direction:column}.big-btn{font-size:16px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>MSSU NCR-CL <span style="font-weight:700">Lighthouse Keepers Daily Log</span></h1>
+    </header>
+
+    <div class="card" id="mainCard">
+      <div class="row">
+        <div class="field">
+          <label for="modeTitle">Mode</label>
+          <div id="modeTitle" class="muted">Click a big button below to switch to TIME-IN or TIME-OUT</div>
+        </div>
+        <div class="field">
+          <label for="nameSelect">Name of LK</label>
+          <select id="nameSelect"><option>Loading...</option></select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="lsInput">Name of LS <span style="color:#000">(required)</span></label>
+          <input id="lsInput" type="text" placeholder="e.g. Corregidor Light Station" required />
+        </div>
+        <div class="field">
+          <label for="aorInput">CGS/CGSS Area of Responsibility (AOR) <span style="color:#000">(required)</span></label>
+          <input id="aorInput" type="text" placeholder="e.g. Corregidor Channel" required />
+        </div>
+      </div>
+
+      <div id="purposeBlock" class="row" style="display:none">
+        <div class="field">
+          <label for="purposeSelect">Purpose</label>
+          <select id="purposeSelect">
+            <option value="">-- choose purpose --</option>
+            <option value="Routine Duty">Routine Duty</option>
+            <option value="Relief/Change of Watch">Relief/Change of Watch</option>
+            <option value="Maintenance Task">Maintenance Task</option>
+            <option value="Emergency Response">Emergency Response</option>
+            <option value="Training/Inspection">Training/Inspection</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field" style="min-width:160px;align-self:flex-end">
+          <button id="submitAction" class="big-btn" style="background:#fff;border:2px solid #444">Submit</button>
+        </div>
+      </div>
+
+      <div class="buttons" style="margin-top:18px">
+        <button id="btnTimeIn" class="big-btn timein">TIME-IN</button>
+        <button id="btnTimeOut" class="big-btn timeout">TIME-OUT</button>
+      </div>
+
+      <div style="margin-top:12px" id="feedbackArea"></div>
+
+      <div class="note">Recorded time uses Philippine Time (Asia/Manila). This page syncs with a Google Sheet so multiple devices share submissions.</div>
+    </div>
+
+    <footer>
+      <div class="status"><div id="lastSync" class="muted">Loading...</div></div>
+    </footer>
+  </div>
+
+<script>
+// ---------- CONFIG: Replace with your Apps Script Web App URL ----------
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMnw7FeXJJ2AYz21iQBvnsj_ZMCrLKBHWCX42g66XWROMF_VbaBNeKuoUXxPA81yYw/exec';
+// ----------------------------------------------------------------------
+
+const FULL_NAMES = [
+  'LK2 Eduardo Santos',
+  'LK2 Julius L Galang',
+  'LK2 Royette D Lagoc',
+  'LK1 Andrew L Catapang',
+  'LK1 Edwin Apatan',
+  'LK1 Joie G Raval',
+  'LK1 Jessie L Pasawa',
+  'LK1 Renie Arce',
+  'LK2 Edwin C Lopez',
+  'LK2 Amorsolo W Lagoc'
+];
+
+// UI elements
+const nameSelect = document.getElementById('nameSelect');
+const modeTitle = document.getElementById('modeTitle');
+const btnTimeIn = document.getElementById('btnTimeIn');
+const btnTimeOut = document.getElementById('btnTimeOut');
+const purposeBlock = document.getElementById('purposeBlock');
+const purposeSelect = document.getElementById('purposeSelect');
+const submitAction = document.getElementById('submitAction');
+const lsInput = document.getElementById('lsInput');
+const aorInput = document.getElementById('aorInput');
+const feedbackArea = document.getElementById('feedbackArea');
+const lastSync = document.getElementById('lastSync');
+
+let currentMode = null; // 'IN' or 'OUT'
+let todaysStatus = []; // fetched from sheet for today
+
+function phtNowISO(){
+  // Return ISO timestamp in Philippine timezone
+  const d = new Date();
+  try{
+    const iso = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+    return iso.toISOString();
+  }catch(e){
+    // fallback: just use local timezone
+    return d.toISOString();
+  }
+}
+function phtNowReadable(){
+  const d = new Date();
+  const fmt = new Intl.DateTimeFormat('en-US', { timeZone:'Asia/Manila', year:'numeric',month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit' });
+  return fmt.format(d);
+}
+
+function todayDateString(){
+  const iso = phtNowISO();
+  return iso.slice(0,10); // YYYY-MM-DD
+}
+
+async function fetchTodayStatus(){
+  if(!SCRIPT_URL || SCRIPT_URL.includes('REPLACE_WITH')){ console.warn('SCRIPT_URL not configured'); lastSync.textContent='Apps Script URL not configured'; populateNameSelect(FULL_NAMES); return; }
+  try{
+    const date = todayDateString();
+    const res = await fetch(SCRIPT_URL + '?action=get&date=' + date);
+    if(!res.ok) throw new Error('Fetch failed');
+    const data = await res.json();
+    // Expect data to be array of rows {Date, Action, Name, ...}
+    todaysStatus = data || [];
+    lastSync.textContent = 'Last sync: ' + phtNowReadable();
+    updateNameOptions();
+  }catch(err){
+    console.error(err);
+    lastSync.textContent = 'Failed to sync attendance (check Apps Script URL & permissions)';
+    // fallback to empty
+    todaysStatus = [];
+    updateNameOptions();
+  }
+}
+
+function updateNameOptions(){
+  // Build sets
+  const namesWithIn = new Set(todaysStatus.filter(r => r.Action === 'Time-In').map(r=>r.Name));
+  const namesWithOut = new Set(todaysStatus.filter(r => r.Action === 'Time-Out').map(r=>r.Name));
+
+  // For Time-In mode: available = FULL_NAMES - namesWithIn
+  // For Time-Out mode: available = namesWithIn - namesWithOut
+
+  let options = [];
+  if(currentMode === 'IN'){
+    options = FULL_NAMES.filter(n => !namesWithIn.has(n));
+  }else if(currentMode === 'OUT'){
+    options = FULL_NAMES.filter(n => namesWithIn.has(n) && !namesWithOut.has(n));
+  }else{
+    // default show not-yet-time-in
+    options = FULL_NAMES.filter(n => !namesWithIn.has(n));
+  }
+
+  populateNameSelect(options);
+}
+
+function populateNameSelect(list){
+  nameSelect.innerHTML = '';
+  if(list.length===0){
+    const opt = document.createElement('option'); opt.textContent='No names available'; opt.value=''; nameSelect.appendChild(opt); return;
+  }
+  const placeholder = document.createElement('option'); placeholder.textContent='-- choose name --'; placeholder.value=''; nameSelect.appendChild(placeholder);
+  list.forEach(n=>{ const o=document.createElement('option'); o.value=n; o.textContent=n; nameSelect.appendChild(o); });
+}
+
+// Mode switching functions
+btnTimeIn.addEventListener('click', ()=>{ currentMode='IN'; modeTitle.textContent='TIME-IN MODE'; purposeBlock.style.display='flex'; updateNameOptions(); btnTimeIn.classList.remove('disabled'); btnTimeOut.classList.remove('disabled'); });
+btnTimeOut.addEventListener('click', ()=>{ currentMode='OUT'; modeTitle.textContent='TIME-OUT MODE'; purposeBlock.style.display='flex'; updateNameOptions(); });
+
+// Submit handler
+submitAction.addEventListener('click', async ()=>{
+  const name = nameSelect.value;
+  const ls = lsInput.value.trim();
+  const aor = aorInput.value.trim();
+  const purpose = purposeSelect.value || 'Not specified';
+  if(!currentMode){ showFeedback('Please choose TIME-IN or TIME-OUT first.','error'); return; }
+  if(!name){ showFeedback('Please choose a name.','error'); return; }
+  if(!ls){ showFeedback('Name of LS is required.','error'); return; }
+  if(!aor){ showFeedback('CGS/CGSS AOR is required.','error'); return; }
+
+  // If OUT but no IN exists, block
+  if(currentMode==='OUT'){
+    const hasIn = todaysStatus.some(r=>r.Name===name && r.Action==='Time-In');
+    if(!hasIn){ showFeedback('Cannot Time-Out: Time-In not found for this name today.','error'); return; }
+    const alreadyOut = todaysStatus.some(r=>r.Name===name && r.Action==='Time-Out');
+    if(alreadyOut){ showFeedback('Time-Out already recorded for this name today.','error'); return; }
+  }
+
+  // Build payload
+  const payload = {
+    Timestamp_ISO: phtNowISO(),
+    Timestamp_PHT: phtNowReadable(),
+    Date: todayDateString(),
+    Action: currentMode === 'IN' ? 'Time-In' : 'Time-Out',
+    Name: name,
+    Purpose: purpose,
+    LS: ls,
+    AOR: aor,
+    UserAgent: navigator.userAgent
+  };
+
+  // POST to Apps Script
+  try{
+    if(!SCRIPT_URL || SCRIPT_URL.includes('REPLACE_WITH')){ throw new Error('Script URL not set'); }
+    submitAction.disabled = true; submitAction.textContent='Sending...';
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok) throw new Error('Network response was not ok');
+    const result = await res.json();
+    if(result.status==='success'){
+      // update local status and UI
+      todaysStatus.push({Action:payload.Action,Name:payload.Name,Date:payload.Date});
+      showFeedback('Submitted successfully for '+payload.Name, 'success');
+      // If Time-Out then show See you tomorrow
+      if(currentMode==='OUT'){
+        showPostSubmissionMessage('See you tomorrow');
+      }else{
+        showPostSubmissionMessage('Submitted');
+      }
+      updateNameOptions();
+    }else{
+      throw new Error(result.message || 'Submission failed');
+    }
+  }catch(err){
+    console.error(err);
+    showFeedback('Submission failed: '+err.message,'error');
+  }finally{
+    submitAction.disabled=false; submitAction.textContent='Submit';
+  }
+});
+
+function showFeedback(msg, type){
+  feedbackArea.innerHTML = '';
+  const d = document.createElement('div');
+  d.className = type==='error' ? 'submitted' : 'submitted';
+  d.textContent = msg;
+  feedbackArea.appendChild(d);
+}
+
+function showPostSubmissionMessage(text){
+  // Replace the big buttons with a single disabled message for clarity
+  btnTimeIn.classList.add('disabled'); btnTimeOut.classList.add('disabled');
+  modeTitle.textContent = text.toUpperCase();
+}
+
+// Initial load
+fetchTodayStatus();
+// Refresh every 45 seconds to keep shared state fresh
+setInterval(fetchTodayStatus, 45000);
+
+</script>
+
+<!--
+----- APPS_SCRIPT (Google Apps Script) -----
+Paste the following into Code.gs in a new Google Apps Script project.
+Change SPREADSHEET_ID to your sheet's ID.
+Deploy as Web App (Execute as: Me; Who has access: Anyone, even anonymous).
+
+NOTE: Keep your sheet column headers in row 1 exactly as below or adjust accordingly.
+-->
+
+<!--
+// --- START of Apps Script code ---
+const SPREADSHEET_ID = 'REPLACE_WITH_YOUR_SPREADSHEET_ID'; // e.g. '1AbC...'
+const SHEET_NAME = 'Attendance';
+
+function doPost(e){
+  try{
+    const data = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sh = ss.getSheetByName(SHEET_NAME);
+    if(!sh){ return ContentService.createTextOutput(JSON.stringify({status:'error',message:'Sheet not found'})).setMimeType(ContentService.MimeType.JSON); }
+    // Append row
+    sh.appendRow([data.Timestamp_ISO, data.Timestamp_PHT, data.Date, data.Action, data.Name, data.Purpose, data.LS, data.AOR, data.UserAgent]);
+    return ContentService.createTextOutput(JSON.stringify({status:'success'})).setMimeType(ContentService.MimeType.JSON);
+  }catch(err){
+    return ContentService.createTextOutput(JSON.stringify({status:'error',message:err.message})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e){
+  try{
+    const date = e.parameter.date || (new Date()).toISOString().slice(0,10);
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sh = ss.getSheetByName(SHEET_NAME);
+    if(!sh) return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+    const values = sh.getDataRange().getValues();
+    const headers = values.shift();
+    const rows = values.map(r => {
+      const obj = {};
+      headers.forEach((h,i)=> obj[h]=r[i]);
+      return obj;
+    });
+    // Filter by Date column
+    const filtered = rows.filter(r => r.Date === date);
+    return ContentService.createTextOutput(JSON.stringify(filtered)).setMimeType(ContentService.MimeType.JSON);
+  }catch(err){
+    return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+// --- END of Apps Script code ---
+-->
+
+</body>
+</html>
