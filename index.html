@@ -67,22 +67,24 @@
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxgUDCXWZdFVnGGNDYYioiot6BMK8UtnAmOKrK3P3umgkdgHQ5IjRwHlVWXb_Wu43na/exec';
 
-const loginBtn = document.getElementById('loginBtn');
-const loginDiv = document.getElementById('loginDiv');
-const attendanceDiv = document.getElementById('attendanceDiv');
-
 const timeInBtn = document.getElementById('timeInBtn');
 const timeOutBtn = document.getElementById('timeOutBtn');
-
 const lkNameSelect = document.getElementById('lkName');
 const lsInput = document.getElementById('lsName');
 const aorInput = document.getElementById('aor');
 const lastSync = document.getElementById('lastSync');
+const loginDiv = document.getElementById('loginDiv');
+const attendanceDiv = document.getElementById('attendanceDiv');
 
-// Login button click
-loginBtn.addEventListener('click', () => {
-  loginDiv.classList.add('hidden');
-  attendanceDiv.classList.remove('hidden');
+// Ensure login button works after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  const loginBtn = document.getElementById('loginBtn');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+      loginDiv.classList.add('hidden');
+      attendanceDiv.classList.remove('hidden');
+    });
+  }
 });
 
 // Get Philippine time
@@ -92,7 +94,7 @@ function getPhilippineTime() {
   return { iso: now.toISOString(), pht, date: pht.split(',')[0] };
 }
 
-// Daily reset logic (runs at load + midnight)
+// Daily reset logic
 function resetDaily() {
   lkNameSelect.dataset.timeIn = "";
   timeInBtn.disabled = false;
@@ -154,23 +156,20 @@ async function submitAttendance(action) {
       alert(result.message);
 
       if (action === 'TIME-IN') {
-        // Just mark that this person has timed in
         lkNameSelect.dataset.timeIn = true;
       }
 
       if (action === 'TIME-OUT') {
-        // Remove the selected name only after TIME-OUT
         const selectedIndex = lkNameSelect.selectedIndex;
         if (selectedIndex > 0) {
           lkNameSelect.remove(selectedIndex);
         }
 
-        // Disable buttons and show message
         timeInBtn.disabled = true;
         timeOutBtn.disabled = true;
         const seeYou = document.createElement('p');
         seeYou.textContent = "SEE YOU TOMORROW";
-        seeYou.classList.add("seeYouMsg"); // mark for easy removal
+        seeYou.classList.add("seeYouMsg");
         seeYou.style.fontWeight = 'bold';
         seeYou.style.fontSize = '18px';
         attendanceDiv.appendChild(seeYou);
