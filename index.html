@@ -201,6 +201,11 @@ async function submitAttendance(action) {
 }
 timeInBtn.addEventListener('click', () => submitAttendance('TIME-IN'));
 timeOutBtn.addEventListener('click', () => submitAttendance('TIME-OUT'));
+  if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log("Service Worker registered"))
+    .catch(err => console.error("Service Worker failed:", err));
+}
 </script>
 </body>
 </html>
