@@ -31,20 +31,19 @@
     <div class="row">
       <div>
         <label for="lkName">Name of LK</label><br>
-     <select id="lkName">
-  <option value="">-- choose name --</option>
-  <option value="LK2 Eduardo Santos">LK2 Eduardo Santos</option>
-  <option value="LK2 Julius L Galang">LK2 Julius L Galang</option>
-  <option value="LK2 Royette D Lagoc">LK2 Royette D Lagoc</option>
-  <option value="LK1 Andrew L Catapang">LK1 Andrew L Catapang</option>
-  <option value="LK1 Edwin Apatan">LK1 Edwin Apatan</option>
-  <option value="LK1 Joie G Raval">LK1 Joie G Raval</option>
-  <option value="LK1 Jessie L Pasawa">LK1 Jessie L Pasawa</option>
-  <option value="LK1 Renie Arce">LK1 Renie Arce</option>
-  <option value="LK2 Edwin C Lopez">LK2 Edwin C Lopez</option>
-  <option value="LK2 Amorsolo W Lagoc">LK2 Amorsolo W Lagoc</option>
-</select>
-
+        <select id="lkName">
+          <option value="">-- choose name --</option>
+          <option value="LK2 Eduardo Santos">LK2 Eduardo Santos</option>
+          <option value="LK2 Julius L Galang">LK2 Julius L Galang</option>
+          <option value="LK2 Royette D Lagoc">LK2 Royette D Lagoc</option>
+          <option value="LK1 Andrew L Catapang">LK1 Andrew L Catapang</option>
+          <option value="LK1 Edwin Apatan">LK1 Edwin Apatan</option>
+          <option value="LK1 Joie G Raval">LK1 Joie G Raval</option>
+          <option value="LK1 Jessie L Pasawa">LK1 Jessie L Pasawa</option>
+          <option value="LK1 Renie Arce">LK1 Renie Arce</option>
+          <option value="LK2 Edwin C Lopez">LK2 Edwin C Lopez</option>
+          <option value="LK2 Amorsolo W Lagoc">LK2 Amorsolo W Lagoc</option>
+        </select>
       </div>
       <div>
         <label for="lsName">Name of LS (required)</label><br>
@@ -61,7 +60,6 @@
       <button id="timeOutBtn">TIME-OUT</button>
     </div>
 
-    <p>Recorded time uses Philippine Time (Asia/Manila). This page syncs with a Google Sheet so multiple devices share submissions.</p>
     <p id="lastSync"></p>
   </div>
 </div>
@@ -94,6 +92,36 @@ function getPhilippineTime() {
   return { iso: now.toISOString(), pht, date: pht.split(',')[0] };
 }
 
+// Daily reset logic (runs at load + midnight)
+function resetDaily() {
+  lkNameSelect.dataset.timeIn = "";
+  timeInBtn.disabled = false;
+  timeOutBtn.disabled = false;
+  lastSync.textContent = "Ready for " + new Date().toLocaleDateString("en-PH", { timeZone: "Asia/Manila" });
+
+  // Remove "SEE YOU TOMORROW" message if it exists
+  const seeYouMsg = attendanceDiv.querySelector("p.seeYouMsg");
+  if (seeYouMsg) {
+    seeYouMsg.remove();
+  }
+}
+
+// Run reset on page load
+window.addEventListener('load', resetDaily);
+
+// Auto reset at midnight
+function scheduleMidnightReset() {
+  const now = new Date();
+  const midnight = new Date();
+  midnight.setHours(24,0,0,0); // next midnight
+  const msUntilMidnight = midnight.getTime() - now.getTime();
+  setTimeout(() => {
+    resetDaily();
+    scheduleMidnightReset(); // reschedule for next midnight
+  }, msUntilMidnight);
+}
+scheduleMidnightReset();
+
 // Submit attendance
 async function submitAttendance(action) {
   const lkName = lkNameSelect.value;
@@ -102,8 +130,11 @@ async function submitAttendance(action) {
 
   if (!lkName) { alert("Please select your name."); return; }
   if (!ls || !aor) { alert("LS and AOR are required."); return; }
+
+  // Restrict TIME-OUT unless TIME-IN was done
   if (action === 'TIME-OUT' && !lkNameSelect.dataset.timeIn) {
-    alert("You must TIME-IN first."); return;
+    alert("You must TIME-IN first before TIME-OUT.");
+    return;
   }
 
   const { iso, pht, date } = getPhilippineTime();
@@ -120,33 +151,30 @@ async function submitAttendance(action) {
     const result = await resp.json();
 
     if (result.status === 'success') {
-  alert(result.message);
+      alert(result.message);
 
-  // Restrict TIME-OUT unless TIME-IN was done
-  if (action === 'TIME-IN') {
-    lkNameSelect.dataset.timeIn = true;
-  } else if (action === 'TIME-OUT' && !lkNameSelect.dataset.timeIn) {
-    alert("You must TIME-IN first before TIME-OUT.");
-    return;
-  }
+      if (action === 'TIME-IN') {
+        // Just mark that this person has timed in
+        lkNameSelect.dataset.timeIn = true;
+      }
 
-  // Remove the selected name after TIME-IN or TIME-OUT
-  const selectedIndex = lkNameSelect.selectedIndex;
-  if (selectedIndex > 0) {
-    lkNameSelect.remove(selectedIndex);
-  }
+      if (action === 'TIME-OUT') {
+        // Remove the selected name only after TIME-OUT
+        const selectedIndex = lkNameSelect.selectedIndex;
+        if (selectedIndex > 0) {
+          lkNameSelect.remove(selectedIndex);
+        }
 
-  if (action === 'TIME-OUT') {
-    timeInBtn.disabled = true;
-    timeOutBtn.disabled = true;
-    const seeYou = document.createElement('p');
-    seeYou.textContent = "SEE YOU TOMORROW";
-    seeYou.style.fontWeight = 'bold';
-    seeYou.style.fontSize = '18px';
-    attendanceDiv.appendChild(seeYou);
-  }
-}
-
+        // Disable buttons and show message
+        timeInBtn.disabled = true;
+        timeOutBtn.disabled = true;
+        const seeYou = document.createElement('p');
+        seeYou.textContent = "SEE YOU TOMORROW";
+        seeYou.classList.add("seeYouMsg"); // mark for easy removal
+        seeYou.style.fontWeight = 'bold';
+        seeYou.style.fontSize = '18px';
+        attendanceDiv.appendChild(seeYou);
+      }
 
     } else {
       alert("Error: " + result.message);
