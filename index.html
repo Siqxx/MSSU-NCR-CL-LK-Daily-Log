@@ -51,7 +51,7 @@
       </div>
       <div>
         <label for="aor">CGS/CGSS Area of Responsibility (AOR) (required)</label><br>
-        <input type="text" id="aor" placeholder="e.g. Corregidor Channel" required>
+        <input type="text" id="aor" placeholder="e.g. CGS or CGSS" required>
       </div>
     </div>
 
@@ -66,7 +66,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMnw7FeXJJ2AYz21iQBvnsj_ZMCrLKBHWCX42g66XWROMF_VbaBNeKuoUXxPA81yYw/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOzqj8NV5f7_9K1IxLAnLuqeKg5DLq18pk8wCugMUXQZsuyWq2HF57sgcpZUNY-Qs/exec';
 
 const loginBtn = document.getElementById('loginBtn');
 const loginDiv = document.getElementById('loginDiv');
@@ -117,27 +117,30 @@ async function submitAttendance(action) {
       body: JSON.stringify(data)
     });
     const result = await resp.json();
+
     if (result.status === 'success') {
-      alert(action + " submitted successfully!");
+      alert(result.message);
 
-      // Mark as time-in done
-      if (action === 'TIME-IN') lkNameSelect.dataset.timeIn = true;
-
-      // Remove name from dropdown
-      lkNameSelect.querySelector(`option[value="${lkName}"]`).remove();
+      if (action === 'TIME-IN') {
+        lkNameSelect.dataset.timeIn = true;
+        // Remove name from dropdown so they can't select again
+        lkNameSelect.querySelector(`option[value="${lkName}"]`).remove();
+      }
 
       if (action === 'TIME-OUT') {
-        timeInBtn.style.display = 'none';
-        timeOutBtn.style.display = 'none';
+        timeInBtn.disabled = true;
+        timeOutBtn.disabled = true;
         const seeYou = document.createElement('p');
         seeYou.textContent = "SEE YOU TOMORROW";
         seeYou.style.fontWeight = 'bold';
         seeYou.style.fontSize = '18px';
         attendanceDiv.appendChild(seeYou);
       }
+
     } else {
       alert("Error: " + result.message);
     }
+
   } catch(err) {
     alert("Submission failed: " + err);
   }
@@ -147,7 +150,6 @@ async function submitAttendance(action) {
 
 timeInBtn.addEventListener('click', () => submitAttendance('TIME-IN'));
 timeOutBtn.addEventListener('click', () => submitAttendance('TIME-OUT'));
-
 </script>
 </body>
 </html>
