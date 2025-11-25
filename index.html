@@ -139,6 +139,12 @@ async function submitAttendance(action) {
     return;
   }
 
+  // Restrict double entry
+  if (lkNameSelect.dataset[action]) {
+    alert("You already submitted " + action + " today.");
+    return;
+  }
+
   const { iso, pht, date } = getPhilippineTime();
   const data = { 
     Timestamp_ISO: iso, Timestamp_PHT: pht, Date: date,
@@ -157,14 +163,19 @@ async function submitAttendance(action) {
 
       if (action === 'TIME-IN') {
         lkNameSelect.dataset.timeIn = true;
+        lkNameSelect.dataset['TIME-IN'] = true; // mark submitted
       }
 
       if (action === 'TIME-OUT') {
+        lkNameSelect.dataset['TIME-OUT'] = true; // mark submitted
+
+        // Remove the selected name only after TIME-OUT
         const selectedIndex = lkNameSelect.selectedIndex;
         if (selectedIndex > 0) {
           lkNameSelect.remove(selectedIndex);
         }
 
+        // Disable buttons and show message
         timeInBtn.disabled = true;
         timeOutBtn.disabled = true;
         const seeYou = document.createElement('p');
@@ -185,7 +196,6 @@ async function submitAttendance(action) {
 
   lastSync.textContent = "Last sync: " + pht;
 }
-
 timeInBtn.addEventListener('click', () => submitAttendance('TIME-IN'));
 timeOutBtn.addEventListener('click', () => submitAttendance('TIME-OUT'));
 </script>
