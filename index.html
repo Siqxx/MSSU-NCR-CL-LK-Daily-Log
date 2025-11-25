@@ -120,27 +120,33 @@ async function submitAttendance(action) {
     const result = await resp.json();
 
     if (result.status === 'success') {
-      alert(result.message);
+  alert(result.message);
 
-     if (action === 'TIME-IN') {
-  lkNameSelect.dataset.timeIn = true;
+  // Restrict TIME-OUT unless TIME-IN was done
+  if (action === 'TIME-IN') {
+    lkNameSelect.dataset.timeIn = true;
+  } else if (action === 'TIME-OUT' && !lkNameSelect.dataset.timeIn) {
+    alert("You must TIME-IN first before TIME-OUT.");
+    return;
+  }
 
-  // Safe removal of selected name from dropdown
-  const optionToRemove = lkNameSelect.querySelector(`option[value="${lkName}"]`);
-  if (optionToRemove) {
-    optionToRemove.remove();
+  // Remove the selected name after TIME-IN or TIME-OUT
+  const selectedIndex = lkNameSelect.selectedIndex;
+  if (selectedIndex > 0) {
+    lkNameSelect.remove(selectedIndex);
+  }
+
+  if (action === 'TIME-OUT') {
+    timeInBtn.disabled = true;
+    timeOutBtn.disabled = true;
+    const seeYou = document.createElement('p');
+    seeYou.textContent = "SEE YOU TOMORROW";
+    seeYou.style.fontWeight = 'bold';
+    seeYou.style.fontSize = '18px';
+    attendanceDiv.appendChild(seeYou);
   }
 }
 
-      if (action === 'TIME-OUT') {
-        timeInBtn.disabled = true;
-        timeOutBtn.disabled = true;
-        const seeYou = document.createElement('p');
-        seeYou.textContent = "SEE YOU TOMORROW";
-        seeYou.style.fontWeight = 'bold';
-        seeYou.style.fontSize = '18px';
-        attendanceDiv.appendChild(seeYou);
-      }
 
     } else {
       alert("Error: " + result.message);
