@@ -84,6 +84,12 @@
     #statusMessage {
       margin-top: 15px;
       font-weight: bold;
+      transition: opacity 1s ease; /* smooth fade */
+      opacity: 1;
+    }
+
+    .hiddenMessage {
+      opacity: 0;
     }
   </style>
 </head>
@@ -185,6 +191,7 @@
       if (!lkName || !ls || !aor) {
         statusMessage.textContent = "⚠️ Please complete all required fields.";
         statusMessage.style.color = "red";
+        statusMessage.classList.remove("hiddenMessage");
         return;
       }
 
@@ -210,12 +217,18 @@
           body: JSON.stringify(data),
           headers: { 'Content-Type': 'application/json' }
         });
-        // ✅ Inline success banner
         statusMessage.textContent = "✅ Attendance recorded successfully!";
         statusMessage.style.color = "green";
+        statusMessage.classList.remove("hiddenMessage");
+
+        // ✅ Fade out after 3 seconds
+        setTimeout(() => {
+          statusMessage.classList.add("hiddenMessage");
+        }, 3000);
       } catch (err) {
         statusMessage.textContent = "❌ Submission failed: " + err;
         statusMessage.style.color = "red";
+        statusMessage.classList.remove("hiddenMessage");
       }
 
       lastSync.textContent = "Last sync: " + pht;
