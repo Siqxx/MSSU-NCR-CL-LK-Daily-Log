@@ -51,10 +51,11 @@ button {
 </style>
 </head>
 <body>
+<body>
 <div class="container">
   <h1>MSSU NCR-CL Lighthouse Keepers Daily Log</h1>
 
-  <!-- Login Button -->
+  <!-- Login Screen -->
   <div id="loginDiv">
     <button id="loginBtn">MSSU NCR-CL LK DAILY LOG IN</button>
     <button id="installBtn">Install LK Attendance</button>
@@ -67,16 +68,7 @@ button {
         <label for="lkName">Name of LK</label><br>
         <select id="lkName">
           <option value="">-- choose name --</option>
-          <option value="LK2 Eduardo Santos">LK2 Eduardo Santos</option>
-          <option value="LK2 Julius L Galang">LK2 Julius L Galang</option>
-          <option value="LK2 Royette D Lagoc">LK2 Royette D Lagoc</option>
-          <option value="LK1 Andrew L Catapang">LK1 Andrew L Catapang</option>
-          <option value="LK1 Edwin Apatan">LK1 Edwin Apatan</option>
-          <option value="LK1 Joie G Raval">LK1 Joie G Raval</option>
-          <option value="LK1 Jessie L Pasawa">LK1 Jessie L Pasawa</option>
-          <option value="LK1 Renie Arce">LK1 Renie Arce</option>
-          <option value="LK2 Edwin C Lopez">LK2 Edwin C Lopez</option>
-          <option value="LK2 Amorsolo W Lagoc">LK2 Amorsolo W Lagoc</option>
+          <!-- your LK options here -->
         </select>
       </div>
       <div>
@@ -84,7 +76,7 @@ button {
         <input type="text" id="lsName" placeholder="e.g. Corregidor Light Station" required>
       </div>
       <div>
-        <label for="aor">CGS/CGSS Area of Responsibility (AOR) (required)</label><br>
+        <label for="aor">CGS/CGSS Area of Responsibility (AOR)</label><br>
         <input type="text" id="aor" placeholder="e.g. CGS or CGSS" required>
       </div>
       <div>
@@ -123,11 +115,16 @@ const outputInput = document.getElementById('output');
 // Ensure login button works after DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   const loginBtn = document.getElementById('loginBtn');
-  if (loginBtn) {
-    loginBtn.addEventListener('click', () => {
-      loginDiv.classList.add('hidden');
-      attendanceDiv.classList.remove('hidden');
-    });
+  const installBtn = document.getElementById('installBtn');
+
+  loginBtn.addEventListener('click', () => {
+    loginDiv.classList.add('hidden');
+    attendanceDiv.classList.remove('hidden');
+  });
+
+  // Show install button only before login
+  installBtn.style.display = 'block';
+});
   }
 });
 
