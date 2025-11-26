@@ -55,25 +55,28 @@
         <option value="LK2 Edwin C Lopez">LK2 Edwin C Lopez</option>
         <option value="LK2 Amorsolo W Lagoc">LK2 Amorsolo W Lagoc</option>
       </select>
-    </div>
-    <div>
-      <label for="lsName">Name of LS (required)</label><br>
-      <input type="text" id="lsName" placeholder="e.g. Corregidor Light Station" required>
-    </div>
-    <div>
-      <label for="aor">CGS/CGSS Area of Responsibility (AOR) (required)</label><br>
-      <input type="text" id="aor" placeholder="e.g. CGS or CGSS" required>
-    </div>
-    <div>
-      <label for="whereabout">LK Whereabout</label><br>
-      <input type="text" id="whereabout" placeholder="e.g. On duty at Corregidor">
-    </div>
-    <div>
-      <label for="output">Today's Output</label><br>
-      <input type="text" id="output" placeholder="e.g. Maintenance completed, report submitted">
-    </div>
+   <div class="row parameters">
+  <div>
+    <label for="lkName">Name of LK</label><br>
+    <select id="lkName">...</select>
   </div>
-
+  <div>
+    <label for="lsName">Name of LS (required)</label><br>
+    <input type="text" id="lsName" placeholder="e.g. Corregidor Light Station" required>
+  </div>
+  <div>
+    <label for="aor">CGS/CGSS Area of Responsibility (AOR) (required)</label><br>
+    <input type="text" id="aor" placeholder="e.g. CGS or CGSS" required>
+  </div>
+  <div>
+    <label for="whereabout">LK Whereabout</label><br>
+    <input type="text" id="whereabout" placeholder="e.g. On duty at Corregidor">
+  </div>
+  <div>
+    <label for="output">Today's Output</label><br>
+    <input type="text" id="output" placeholder="e.g. Maintenance completed, report submitted">
+  </div>
+</div>
   <div class="row">
     <button id="timeInBtn">TIME-IN</button>
     <button id="timeOutBtn">TIME-OUT</button>
