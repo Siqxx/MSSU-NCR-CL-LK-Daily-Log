@@ -6,80 +6,80 @@
   <title>MSSU NCR-CL Lighthouse Keepers Daily Log</title>
   <style>
     body {
-  font-family: Arial, sans-serif;
-  background: #ffffff;
-  margin: 0;
-  padding: 0;
-}
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
 
-.container {
-  background: #ffffff;
-  color: black;
-  padding: 30px;
-  width: 100vw;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
+    .container {
+      background: #ffffff;
+      color: black;
+      padding: 30px;
+      width: 100vw;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
 
-h1 {
-  color: #0044aa;
-  text-align: center;
-}
+    h1 {
+      color: #0044aa;
+      text-align: center;
+    }
 
-.row.parameters {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
+    .row.parameters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
 
-.row {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
 
-select, input {
-  padding: 10px;
-  margin-top: 5px;
-  width: 100%;
-  box-sizing: border-box;
-  background-color: #ffffff;
-  color: #0044aa;
-  border: 2px solid #0044aa;
-  border-radius: 5px;
-}
+    select, input {
+      padding: 10px;
+      margin-top: 5px;
+      width: 100%;
+      box-sizing: border-box;
+      background-color: #ffffff;
+      color: #0044aa;
+      border: 2px solid #0044aa;
+      border-radius: 5px;
+    }
 
-button {
-  padding: 15px 25px;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    button {
+      padding: 15px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-#loginBtn, #installBtn {
-  width: 100%;
-  background: #0044aa;
-  color: white;
-  margin-bottom: 10px;
-}
+    #loginBtn, #installBtn {
+      width: 100%;
+      background: #0044aa;
+      color: white;
+      margin-bottom: 10px;
+    }
 
-#timeInBtn {
-  background: green;
-  color: black;
-  width: 48%;
-}
+    #timeInBtn {
+      background: green;
+      color: black;
+      width: 48%;
+    }
 
-#timeOutBtn {
-  background: red;
-  color: black;
-  width: 48%;
-}
+    #timeOutBtn {
+      background: red;
+      color: black;
+      width: 48%;
+    }
 
-.hidden {
-  display: none;
-}
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -154,6 +154,7 @@ button {
     const outputInput = document.getElementById('output');
     const lastSync = document.getElementById('lastSync');
 
+    // ✅ Login button logic
     loginBtn.addEventListener('click', () => {
       loginDiv.classList.add('hidden');
       attendanceDiv.classList.remove('hidden');
@@ -166,53 +167,50 @@ button {
       return { iso: now.toISOString(), pht, date: pht.split(',')[0] };
     }
 
- <script>
-  async function submitAttendance(action) {
-    const lkName = lkNameSelect.value;
-    const ls = lsInput.value.trim();
-    const aor = aorInput.value.trim();
-    const whereabout = whereaboutInput.value.trim();
-    const output = outputInput.value.trim();
+    async function submitAttendance(action) {
+      const lkName = lkNameSelect.value;
+      const ls = lsInput.value.trim();
+      const aor = aorInput.value.trim();
+      const whereabout = whereaboutInput.value.trim();
+      const output = outputInput.value.trim();
 
-    if (!lkName || !ls || !aor) {
-      alert("Please complete all required fields.");
-      return;
+      if (!lkName || !ls || !aor) {
+        alert("Please complete all required fields.");
+        return;
+      }
+
+      const { iso, pht, date } = getPhilippineTime();
+      const data = {
+        Timestamp_ISO: iso,
+        Timestamp_PHT: pht,
+        Date: date,
+        Action: action,
+        Name: lkName,
+        Purpose: '',
+        LS: ls,
+        AOR: aor,
+        Whereabout: whereabout,
+        Output: output,
+        UserAgent: navigator.userAgent
+      };
+
+      try {
+        const resp = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',   // bypasses CORS blocking
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        alert("Submitted! (response not readable due to no-cors)");
+      } catch (err) {
+        alert("Submission failed: " + err);
+      }
+
+      lastSync.textContent = "Last sync: " + pht;
     }
 
-    const { iso, pht, date } = getPhilippineTime();
-    const data = {
-      Timestamp_ISO: iso,
-      Timestamp_PHT: pht,
-      Date: date,
-      Action: action,
-      Name: lkName,
-      Purpose: '',
-      LS: ls,
-      AOR: aor,
-      Whereabout: whereabout,
-      Output: output,
-      UserAgent: navigator.userAgent
-    };
-
-    // ✅ Place your try/catch block here
-    try {
-      const resp = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',   // bypasses CORS blocking
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      alert("Submitted! (response not readable due to no-cors)");
-    } catch (err) {
-      alert("Submission failed: " + err);
-    }
-
-    lastSync.textContent = "Last sync: " + pht;
-  }
-
-  timeInBtn.addEventListener('click', () => submitAttendance('TIME-IN'));
-  timeOutBtn.addEventListener('click', () => submitAttendance('TIME-OUT'));
-</script>
+    timeInBtn.addEventListener('click', () => submitAttendance('TIME-IN'));
+    timeOutBtn.addEventListener('click', () => submitAttendance('TIME-OUT'));
   </script>
 </body>
 </html>
