@@ -80,6 +80,11 @@
     .hidden {
       display: none;
     }
+
+    #statusMessage {
+      margin-top: 15px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -134,6 +139,8 @@
         <button id="timeOutBtn">TIME-OUT</button>
       </div>
 
+      <!-- ✅ Inline status message -->
+      <p id="statusMessage"></p>
       <p id="lastSync"></p>
     </div>
   </div>
@@ -153,6 +160,7 @@
     const whereaboutInput = document.getElementById('whereabout');
     const outputInput = document.getElementById('output');
     const lastSync = document.getElementById('lastSync');
+    const statusMessage = document.getElementById('statusMessage');
 
     // ✅ Login button logic
     loginBtn.addEventListener('click', () => {
@@ -175,7 +183,8 @@
       const output = outputInput.value.trim();
 
       if (!lkName || !ls || !aor) {
-        alert("Please complete all required fields.");
+        statusMessage.textContent = "⚠️ Please complete all required fields.";
+        statusMessage.style.color = "red";
         return;
       }
 
@@ -197,14 +206,16 @@
       try {
         await fetch(SCRIPT_URL, {
           method: 'POST',
-          mode: 'no-cors',   // bypasses CORS blocking
+          mode: 'no-cors',
           body: JSON.stringify(data),
           headers: { 'Content-Type': 'application/json' }
         });
-        // ✅ Friendlier success message
-        alert("Attendance recorded successfully!");
+        // ✅ Inline success banner
+        statusMessage.textContent = "✅ Attendance recorded successfully!";
+        statusMessage.style.color = "green";
       } catch (err) {
-        alert("Submission failed: " + err);
+        statusMessage.textContent = "❌ Submission failed: " + err;
+        statusMessage.style.color = "red";
       }
 
       lastSync.textContent = "Last sync: " + pht;
