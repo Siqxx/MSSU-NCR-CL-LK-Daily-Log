@@ -192,7 +192,11 @@ button {
         Output: output,
         UserAgent: navigator.userAgent
       };
-
+fetch(SCRIPT_URL, {
+  method: 'POST',
+  body: JSON.stringify(data),
+  headers: { 'Content-Type': 'application/json' }
+})
       try {
         const resp = await fetch(SCRIPT_URL, {
           method: 'POST',
