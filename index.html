@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -167,50 +167,53 @@
       return { iso: now.toISOString(), pht, date: pht.split(',')[0] };
     }
 
-    async function submitAttendance(action) {
-      const lkName = lkNameSelect.value;
-      const ls = lsInput.value.trim();
-      const aor = aorInput.value.trim();
-      const whereabout = whereaboutInput.value.trim();
-      const output = outputInput.value.trim();
+  <script>
+  async function submitAttendance(action) {
+    const lkName = lkNameSelect.value;
+    const ls = lsInput.value.trim();
+    const aor = aorInput.value.trim();
+    const whereabout = whereaboutInput.value.trim();
+    const output = outputInput.value.trim();
 
-      if (!lkName || !ls || !aor) {
-        alert("Please complete all required fields.");
-        return;
-      }
-
-      const { iso, pht, date } = getPhilippineTime();
-      const data = {
-        Timestamp_ISO: iso,
-        Timestamp_PHT: pht,
-        Date: date,
-        Action: action,
-        Name: lkName,
-        Purpose: '',
-        LS: ls,
-        AOR: aor,
-        Whereabout: whereabout,
-        Output: output,
-        UserAgent: navigator.userAgent
-      };
-
-      try {
-        const resp = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',   // bypasses CORS blocking
-          body: JSON.stringify(data),
-          headers: { 'Content-Type': 'application/json' }
-        });
-        alert("Submitted! (response not readable due to no-cors)");
-      } catch (err) {
-        alert("Submission failed: " + err);
-      }
-
-      lastSync.textContent = "Last sync: " + pht;
+    if (!lkName || !ls || !aor) {
+      alert("Please complete all required fields.");
+      return;
     }
 
-    timeInBtn.addEventListener('click', () => submitAttendance('TIME-IN'));
-    timeOutBtn.addEventListener('click', () => submitAttendance('TIME-OUT'));
+    const { iso, pht, date } = getPhilippineTime();
+    const data = {
+      Timestamp_ISO: iso,
+      Timestamp_PHT: pht,
+      Date: date,
+      Action: action,
+      Name: lkName,
+      Purpose: '',
+      LS: ls,
+      AOR: aor,
+      Whereabout: whereabout,
+      Output: output,
+      UserAgent: navigator.userAgent
+    };
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',   // bypasses CORS blocking
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      // ✅ Friendlier success message
+      alert("Attendance recorded successfully!");
+    } catch (err) {
+      alert("Submission failed: " + err);
+    }
+
+    lastSync.textContent = "Last sync: " + pht;
+  }
+
+  timeInBtn.addEventListener('click', () => submitAttendance('TIME-IN'));
+  timeOutBtn.addEventListener('click', () => submitAttendance('TIME-OUT'));
+</script>
   </script>
 </body>
 </html>
