@@ -5,11 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MSSU NCR-CL Lighthouse Keepers Daily Log</title>
 <style>
-  body { font-family: Arial, sans-serif; background: #ffffff; margin: 20px; }
-  .container { background: #0066cc; color: black; padding: 20px; border-radius: 8px; max-width: 800px; margin: auto; }
-  h1 { text-align: center; }
-  .hidden { display: none; }
-  select, input { padding: 8px; margin: 5px; width: 100%; }
+body {
+  font-family: Arial, sans-serif;
+  background: #ffffff;
+  margin: 0; /* remove outer margin */
+  padding: 0;
+}
+
+.container {
+  background: #0066cc;
+  color: black;
+  padding: 30px;
+  border-radius: 0; /* optional: remove rounded corners */
+  width: 100vw;      /* full viewport width */
+  min-height: 100vh; /* full screen height */
+  box-sizing: border-box;
+}
+
+.row.parameters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* responsive columns */
+  gap: 20px;
+}
+
+select, input {
+  padding: 10px;
+  margin-top: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
   button { padding: 15px 25px; font-size: 16px; margin: 5px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; }
   #loginBtn { width: 100%; background: #0044aa; color: white; }
   #timeInBtn { background: green; color: black; width: 48%; }
