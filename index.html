@@ -6,48 +6,80 @@
   <title>MSSU NCR-CL Lighthouse Keepers Daily Log</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #ffffff;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      background: #0066cc;
-      color: black;
-      padding: 30px;
-      width: 100vw;
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
-    .row.parameters {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-    }
-    .row {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-    select, input {
-      padding: 10px;
-      margin-top: 5px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    button {
-      padding: 15px 25px;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #loginBtn { width: 100%; background: #0044aa; color: white; margin-bottom: 10px; }
-    #installBtn { width: 100%; background: #00aaff; color: black; }
-    #timeInBtn { background: green; color: black; width: 48%; }
-    #timeOutBtn { background: red; color: black; width: 48%; }
-    .hidden { display: none; }
+  font-family: Arial, sans-serif;
+  background: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  background: #ffffff;
+  color: black;
+  padding: 30px;
+  width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+h1 {
+  color: #0044aa;
+  text-align: center;
+}
+
+.row.parameters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+select, input {
+  padding: 10px;
+  margin-top: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  color: #0044aa;
+  border: 2px solid #0044aa;
+  border-radius: 5px;
+}
+
+button {
+  padding: 15px 25px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#loginBtn, #installBtn {
+  width: 100%;
+  background: #0044aa;
+  color: white;
+  margin-bottom: 10px;
+}
+
+#timeInBtn {
+  background: green;
+  color: black;
+  width: 48%;
+}
+
+#timeOutBtn {
+  background: red;
+  color: black;
+  width: 48%;
+}
+
+.hidden {
+  display: none;
+}
   </style>
 </head>
 <body>
