@@ -8,7 +8,7 @@
 body {
   font-family: Arial, sans-serif;
   background: #ffffff;
-  margin: 0; /* remove outer margin */
+  margin: 0;
   padding: 0;
 }
 
@@ -16,15 +16,15 @@ body {
   background: #0066cc;
   color: black;
   padding: 30px;
-  border-radius: 0; /* optional: remove rounded corners */
-  width: 100vw;      /* full viewport width */
-  min-height: 100vh; /* full screen height */
+  border-radius: 0;
+  width: 100vw;
+  min-height: 100vh;
   box-sizing: border-box;
 }
 
 .row.parameters {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* responsive columns */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
 }
 
@@ -34,18 +34,20 @@ select, input {
   width: 100%;
   box-sizing: border-box;
 }
-  button { padding: 15px 25px; font-size: 16px; margin: 5px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; }
-  #loginBtn { width: 100%; background: #0044aa; color: white; }
-  #timeInBtn { background: green; color: black; width: 48%; }
-  #timeOutBtn { background: red; color: black; width: 48%; }
-  .row { display: flex; flex-wrap: wrap; justify-content: space-between; }
 
-  /* ✅ New grid style for parameters */
-  .row.parameters {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* two columns */
-    gap: 10px;
-  }
+button { 
+  padding: 15px 25px; 
+  font-size: 16px; 
+  margin: 5px; 
+  font-weight: bold; 
+  border: none; 
+  border-radius: 5px; 
+  cursor: pointer; 
+}
+#loginBtn { width: 100%; background: #0044aa; color: white; }
+#timeInBtn { background: green; color: black; width: 48%; }
+#timeOutBtn { background: red; color: black; width: 48%; }
+.row { display: flex; flex-wrap: wrap; justify-content: space-between; }
 </style>
 </head>
 <body>
@@ -55,53 +57,53 @@ select, input {
   <!-- Login Button -->
   <div id="loginDiv">
     <button id="loginBtn">MSSU NCR-CL LK DAILY LOG IN</button>
-     <button id="installBtn">Install LK Attendance</button>
+    <button id="installBtn">Install LK Attendance</button>
   </div>
 
   <!-- Attendance Form -->
-<div id="attendanceDiv" class="hidden">
-  <div class="row parameters">
-  <!-- LK Name, LS, AOR, Whereabout, Output fields here -->
-</div>
- <div class="row parameters">
-    <div>
-      <label for="lkName">Name of LK</label><br>
-      <select id="lkName">
-        <option value="">-- choose name --</option>
-        <option value="LK2 Eduardo Santos">LK2 Eduardo Santos</option>
-        <option value="LK2 Julius L Galang">LK2 Julius L Galang</option>
-        <option value="LK2 Royette D Lagoc">LK2 Royette D Lagoc</option>
-        <option value="LK1 Andrew L Catapang">LK1 Andrew L Catapang</option>
-        <option value="LK1 Edwin Apatan">LK1 Edwin Apatan</option>
-        <option value="LK1 Joie G Raval">LK1 Joie G Raval</option>
-        <option value="LK1 Jessie L Pasawa">LK1 Jessie L Pasawa</option>
-        <option value="LK1 Renie Arce">LK1 Renie Arce</option>
-        <option value="LK2 Edwin C Lopez">LK2 Edwin C Lopez</option>
-        <option value="LK2 Amorsolo W Lagoc">LK2 Amorsolo W Lagoc</option>
-      </select>
-  <div>
-    <label for="lsName">Name of LS (required)</label><br>
-    <input type="text" id="lsName" placeholder="e.g. Corregidor Light Station" required>
-  </div>
-  <div>
-    <label for="aor">CGS/CGSS Area of Responsibility (AOR) (required)</label><br>
-    <input type="text" id="aor" placeholder="e.g. CGS or CGSS" required>
-  </div>
-  <div>
-    <label for="whereabout">LK Whereabout</label><br>
-    <input type="text" id="whereabout" placeholder="e.g. On duty at Corregidor">
-  </div>
-  <div>
-    <label for="output">Today's Output</label><br>
-    <input type="text" id="output" placeholder="e.g. Maintenance completed, report submitted">
-  </div>
-</div>
-  <div class="row">
-    <button id="timeInBtn">TIME-IN</button>
-    <button id="timeOutBtn">TIME-OUT</button>
-  </div>
+  <div id="attendanceDiv" class="hidden">
+    <div class="row parameters">
+      <div>
+        <label for="lkName">Name of LK</label><br>
+        <select id="lkName">
+          <option value="">-- choose name --</option>
+          <option value="LK2 Eduardo Santos">LK2 Eduardo Santos</option>
+          <option value="LK2 Julius L Galang">LK2 Julius L Galang</option>
+          <option value="LK2 Royette D Lagoc">LK2 Royette D Lagoc</option>
+          <option value="LK1 Andrew L Catapang">LK1 Andrew L Catapang</option>
+          <option value="LK1 Edwin Apatan">LK1 Edwin Apatan</option>
+          <option value="LK1 Joie G Raval">LK1 Joie G Raval</option>
+          <option value="LK1 Jessie L Pasawa">LK1 Jessie L Pasawa</option>
+          <option value="LK1 Renie Arce">LK1 Renie Arce</option>
+          <option value="LK2 Edwin C Lopez">LK2 Edwin C Lopez</option>
+          <option value="LK2 Amorsolo W Lagoc">LK2 Amorsolo W Lagoc</option>
+        </select>
+      </div>
+      <div>
+        <label for="lsName">Name of LS (required)</label><br>
+        <input type="text" id="lsName" placeholder="e.g. Corregidor Light Station" required>
+      </div>
+      <div>
+        <label for="aor">CGS/CGSS Area of Responsibility (AOR) (required)</label><br>
+        <input type="text" id="aor" placeholder="e.g. CGS or CGSS" required>
+      </div>
+      <div>
+        <label for="whereabout">LK Whereabout</label><br>
+        <input type="text" id="whereabout" placeholder="e.g. On duty at Corregidor">
+      </div>
+      <div>
+        <label for="output">Today's Output</label><br>
+        <input type="text" id="output" placeholder="e.g. Maintenance completed, report submitted">
+      </div>
+    </div>
 
-  <p id="lastSync"></p>
+    <div class="row">
+      <button id="timeInBtn">TIME-IN</button>
+      <button id="timeOutBtn">TIME-OUT</button>
+    </div>
+
+    <p id="lastSync"></p>
+  </div>
 </div>
 
 <script>
@@ -115,6 +117,8 @@ const aorInput = document.getElementById('aor');
 const lastSync = document.getElementById('lastSync');
 const loginDiv = document.getElementById('loginDiv');
 const attendanceDiv = document.getElementById('attendanceDiv');
+const whereaboutInput = document.getElementById('whereabout');
+const outputInput = document.getElementById('output');
 
 // Ensure login button works after DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -141,25 +145,20 @@ function resetDaily() {
   timeOutBtn.disabled = false;
   lastSync.textContent = "Ready for " + new Date().toLocaleDateString("en-PH", { timeZone: "Asia/Manila" });
 
-  // Remove "SEE YOU TOMORROW" message if it exists
   const seeYouMsg = attendanceDiv.querySelector("p.seeYouMsg");
-  if (seeYouMsg) {
-    seeYouMsg.remove();
-  }
+  if (seeYouMsg) { seeYouMsg.remove(); }
 }
-
-// Run reset on page load
 window.addEventListener('load', resetDaily);
 
 // Auto reset at midnight
 function scheduleMidnightReset() {
   const now = new Date();
   const midnight = new Date();
-  midnight.setHours(24,0,0,0); // next midnight
+  midnight.setHours(24,0,0,0);
   const msUntilMidnight = midnight.getTime() - now.getTime();
   setTimeout(() => {
     resetDaily();
-    scheduleMidnightReset(); // reschedule for next midnight
+    scheduleMidnightReset();
   }, msUntilMidnight);
 }
 scheduleMidnightReset();
@@ -169,17 +168,17 @@ async function submitAttendance(action) {
   const lkName = lkNameSelect.value;
   const ls = lsInput.value.trim();
   const aor = aorInput.value.trim();
+  const whereabout = whereaboutInput.value.trim();
+  const output = outputInput.value.trim();
 
   if (!lkName) { alert("Please select your name."); return; }
   if (!ls || !aor) { alert("LS and AOR are required."); return; }
 
-  // Restrict TIME-OUT unless TIME-IN was done
   if (action === 'TIME-OUT' && !lkNameSelect.dataset.timeIn) {
     alert("You must TIME-IN first before TIME-OUT.");
     return;
   }
 
-  // Restrict double entry
   if (lkNameSelect.dataset[action]) {
     alert("You already submitted " + action + " today.");
     return;
@@ -188,7 +187,9 @@ async function submitAttendance(action) {
   const { iso, pht, date } = getPhilippineTime();
   const data = { 
     Timestamp_ISO: iso, Timestamp_PHT: pht, Date: date,
-    Action: action, Name: lkName, Purpose: '', LS: ls, AOR: aor, UserAgent: navigator.userAgent
+    Action: action, Name: lkName, Purpose: '', LS: ls, AOR: aor,
+    Whereabout: whereabout, Output: output,
+    UserAgent: navigator.userAgent
   };
 
   try {
@@ -203,46 +204,8 @@ async function submitAttendance(action) {
 
       if (action === 'TIME-IN') {
         lkNameSelect.dataset.timeIn = true;
-        lkNameSelect.dataset['TIME-IN'] = true; // mark submitted
+        lkNameSelect.dataset['TIME-IN'] = true;
       }
 
       if (action === 'TIME-OUT') {
-        lkNameSelect.dataset['TIME-OUT'] = true; // mark submitted
-
-        // Remove the selected name only after TIME-OUT
-        const selectedIndex = lkNameSelect.selectedIndex;
-        if (selectedIndex > 0) {
-          lkNameSelect.remove(selectedIndex);
-        }
-
-        // Disable buttons and show message
-        timeInBtn.disabled = true;
-        timeOutBtn.disabled = true;
-        const seeYou = document.createElement('p');
-        seeYou.textContent = "SEE YOU TOMORROW";
-        seeYou.classList.add("seeYouMsg");
-        seeYou.style.fontWeight = 'bold';
-        seeYou.style.fontSize = '18px';
-        attendanceDiv.appendChild(seeYou);
-      }
-
-    } else {
-      alert("Error: " + result.message);
-    }
-
-  } catch(err) {
-    alert("Submission failed: " + err);
-  }
-
-  lastSync.textContent = "Last sync: " + pht;
-}
-timeInBtn.addEventListener('click', () => submitAttendance('TIME-IN'));
-timeOutBtn.addEventListener('click', () => submitAttendance('TIME-OUT'));
-  if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(() => console.log("Service Worker registered"))
-    .catch(err => console.error("Service Worker failed:", err));
-}
-</script>
-</body>
-</html>
+        lkNameSelect.dataset['TIME-OUT
