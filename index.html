@@ -1,208 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MSSU NCR-CL Lighthouse Keepers Daily Log</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #ffffff;
-  margin: 0;
-  padding: 0;
-}
-
-.container {
-  background: #0066cc;
-  color: black;
-  padding: 30px;
-  border-radius: 0;
-  width: 100vw;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
-
-.row.parameters {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-select, input {
-  padding: 10px;
-  margin-top: 5px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-button { 
-  padding: 15px 25px; 
-  font-size: 16px; 
-  margin: 5px; 
-  font-weight: bold; 
-  border: none; 
-  border-radius: 5px; 
-  cursor: pointer; 
-}
-#loginBtn { width: 100%; background: #0044aa; color: white; }
-#timeInBtn { background: green; color: black; width: 48%; }
-#timeOutBtn { background: red; color: black; width: 48%; }
-.row { display: flex; flex-wrap: wrap; justify-content: space-between; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MSSU NCR-CL Lighthouse Keepers Daily Log</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      background: #0066cc;
+      color: black;
+      padding: 30px;
+      width: 100vw;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .row.parameters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    select, input {
+      padding: 10px;
+      margin-top: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 15px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #loginBtn { width: 100%; background: #0044aa; color: white; margin-bottom: 10px; }
+    #installBtn { width: 100%; background: #00aaff; color: black; }
+    #timeInBtn { background: green; color: black; width: 48%; }
+    #timeOutBtn { background: red; color: black; width: 48%; }
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
-<body>
-<div class="container">
-  <h1>MSSU NCR-CL Lighthouse Keepers Daily Log</h1>
+  <div class="container">
+    <h1>MSSU NCR-CL Lighthouse Keepers Daily Log</h1>
 
-  <!-- Login Screen -->
-  <div id="loginDiv">
-    <button id="loginBtn">MSSU NCR-CL LK DAILY LOG IN</button>
-    <button id="installBtn">Install LK Attendance</button>
-  </div>
-
-  <!-- Attendance Form -->
-  <div id="attendanceDiv" class="hidden">
-    <div class="row parameters">
-      <div>
-        <label for="lkName">Name of LK</label><br>
-        <select id="lkName">
-          <option value="">-- choose name --</option>
-          <!-- your LK options here -->
-        </select>
-      </div>
-      <div>
-        <label for="lsName">Name of LS (required)</label><br>
-        <input type="text" id="lsName" placeholder="e.g. Corregidor Light Station" required>
-      </div>
-      <div>
-        <label for="aor">CGS/CGSS Area of Responsibility (AOR)</label><br>
-        <input type="text" id="aor" placeholder="e.g. CGS or CGSS" required>
-      </div>
-      <div>
-        <label for="whereabout">LK Whereabout</label><br>
-        <input type="text" id="whereabout" placeholder="e.g. On duty at Corregidor">
-      </div>
-      <div>
-        <label for="output">Today's Output</label><br>
-        <input type="text" id="output" placeholder="e.g. Maintenance completed, report submitted">
-      </div>
+    <!-- Login Section -->
+    <div id="loginDiv">
+      <button id="loginBtn">MSSU NCR-CL LK DAILY LOG IN</button>
+      <button id="installBtn">Install LK Attendance</button>
     </div>
 
-    <div class="row">
-      <button id="timeInBtn">TIME-IN</button>
-      <button id="timeOutBtn">TIME-OUT</button>
+    <!-- Attendance Form -->
+    <div id="attendanceDiv" class="hidden">
+      <div class="row parameters">
+        <div>
+          <label for="lkName">Name of LK</label><br>
+          <select id="lkName">
+            <option value="">-- choose name --</option>
+            <option value="LK2 Eduardo Santos">LK2 Eduardo Santos</option>
+            <option value="LK2 Julius L Galang">LK2 Julius L Galang</option>
+            <option value="LK2 Royette D Lagoc">LK2 Royette D Lagoc</option>
+            <option value="LK1 Andrew L Catapang">LK1 Andrew L Catapang</option>
+            <option value="LK1 Edwin Apatan">LK1 Edwin Apatan</option>
+            <option value="LK1 Joie G Raval">LK1 Joie G Raval</option>
+            <option value="LK1 Jessie L Pasawa">LK1 Jessie L Pasawa</option>
+            <option value="LK1 Renie Arce">LK1 Renie Arce</option>
+            <option value="LK2 Edwin C Lopez">LK2 Edwin C Lopez</option>
+            <option value="LK2 Amorsolo W Lagoc">LK2 Amorsolo W Lagoc</option>
+          </select>
+        </div>
+        <div>
+          <label for="lsName">Name of LS (required)</label><br>
+          <input type="text" id="lsName" placeholder="e.g. Corregidor Light Station" required>
+        </div>
+        <div>
+          <label for="aor">CGS/CGSS Area of Responsibility (AOR)</label><br>
+          <input type="text" id="aor" placeholder="e.g. CGS or CGSS" required>
+        </div>
+        <div>
+          <label for="whereabout">LK Whereabout</label><br>
+          <input type="text" id="whereabout" placeholder="e.g. On duty at Corregidor">
+        </div>
+        <div>
+          <label for="output">Today's Output</label><br>
+          <input type="text" id="output" placeholder="e.g. Maintenance completed, report submitted">
+        </div>
+      </div>
+
+      <div class="row">
+        <button id="timeInBtn">TIME-IN</button>
+        <button id="timeOutBtn">TIME-OUT</button>
+      </div>
+
+      <p id="lastSync"></p>
     </div>
-
-    <p id="lastSync"></p>
   </div>
-</div>
 
-<script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxgUDCXWZdFVnGGNDYYioiot6BMK8UtnAmOKrK3P3umgkdgHQ5IjRwHlVWXb_Wu43na/exec';
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
 
-const timeInBtn = document.getElementById('timeInBtn');
-const timeOutBtn = document.getElementById('timeOutBtn');
-const lkNameSelect = document.getElementById('lkName');
-const lsInput = document.getElementById('lsName');
-const aorInput = document.getElementById('aor');
-const lastSync = document.getElementById('lastSync');
-const loginDiv = document.getElementById('loginDiv');
-const attendanceDiv = document.getElementById('attendanceDiv');
-const whereaboutInput = document.getElementById('whereabout');
-const outputInput = document.getElementById('output');
+    const loginBtn = document.getElementById('loginBtn');
+    const installBtn = document.getElementById('installBtn');
+    const loginDiv = document.getElementById('loginDiv');
+    const attendanceDiv = document.getElementById('attendanceDiv');
+    const timeInBtn = document.getElementById('timeInBtn');
+    const timeOutBtn = document.getElementById('timeOutBtn');
+    const lkNameSelect = document.getElementById('lkName');
+    const lsInput = document.getElementById('lsName');
+    const aorInput = document.getElementById('aor');
+    const whereaboutInput = document.getElementById('whereabout');
+    const outputInput = document.getElementById('output');
+    const lastSync = document.getElementById('lastSync');
 
-// Ensure login button works after DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  const loginBtn = document.getElementById('loginBtn');
-  const installBtn = document.getElementById('installBtn');
-
-  loginBtn.addEventListener('click', () => {
-    loginDiv.classList.add('hidden');
-    attendanceDiv.classList.remove('hidden');
-  });
-
-  // Show install button only before login
-  installBtn.style.display = 'block';
-});
-  }
-});
-
-// Get Philippine time
-function getPhilippineTime() {
-  const now = new Date();
-  const pht = now.toLocaleString("en-PH", {timeZone: "Asia/Manila"});
-  return { iso: now.toISOString(), pht, date: pht.split(',')[0] };
-}
-
-// Daily reset logic
-function resetDaily() {
-  lkNameSelect.dataset.timeIn = "";
-  timeInBtn.disabled = false;
-  timeOutBtn.disabled = false;
-  lastSync.textContent = "Ready for " + new Date().toLocaleDateString("en-PH", { timeZone: "Asia/Manila" });
-
-  const seeYouMsg = attendanceDiv.querySelector("p.seeYouMsg");
-  if (seeYouMsg) { seeYouMsg.remove(); }
-}
-window.addEventListener('load', resetDaily);
-
-// Auto reset at midnight
-function scheduleMidnightReset() {
-  const now = new Date();
-  const midnight = new Date();
-  midnight.setHours(24,0,0,0);
-  const msUntilMidnight = midnight.getTime() - now.getTime();
-  setTimeout(() => {
-    resetDaily();
-    scheduleMidnightReset();
-  }, msUntilMidnight);
-}
-scheduleMidnightReset();
-
-// Submit attendance
-async function submitAttendance(action) {
-  const lkName = lkNameSelect.value;
-  const ls = lsInput.value.trim();
-  const aor = aorInput.value.trim();
-  const whereabout = whereaboutInput.value.trim();
-  const output = outputInput.value.trim();
-
-  if (!lkName) { alert("Please select your name."); return; }
-  if (!ls || !aor) { alert("LS and AOR are required."); return; }
-
-  if (action === 'TIME-OUT' && !lkNameSelect.dataset.timeIn) {
-    alert("You must TIME-IN first before TIME-OUT.");
-    return;
-  }
-
-  if (lkNameSelect.dataset[action]) {
-    alert("You already submitted " + action + " today.");
-    return;
-  }
-
-  const { iso, pht, date } = getPhilippineTime();
-  const data = { 
-    Timestamp_ISO: iso, Timestamp_PHT: pht, Date: date,
-    Action: action, Name: lkName, Purpose: '', LS: ls, AOR: aor,
-    Whereabout: whereabout, Output: output,
-    UserAgent: navigator.userAgent
-  };
-
-  try {
-    const resp = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify(data)
+    loginBtn.addEventListener('click', () => {
+      loginDiv.classList.add('hidden');
+      attendanceDiv.classList.remove('hidden');
+      installBtn.style.display = 'none';
     });
-    const result = await resp.json();
 
-    if (result.status === 'success') {
-      alert(result.message);
+    function getPhilippineTime() {
+      const now = new Date();
+      const pht = now.toLocaleString("en-PH", { timeZone: "Asia/Manila" });
+      return { iso: now.toISOString(), pht, date: pht.split(',')[0] };
+    }
 
-      if (action === 'TIME-IN') {
-        lkNameSelect.dataset.timeIn = true;
-        lkNameSelect.dataset['TIME-IN'] = true;
+    async function submitAttendance(action) {
+      const lkName = lkNameSelect.value;
+      const ls = lsInput.value.trim();
+      const aor = aorInput.value.trim();
+      const whereabout = whereaboutInput.value.trim();
+      const output = outputInput.value.trim();
+
+      if (!lkName || !ls || !aor) {
+        alert("Please complete all required fields.");
+        return;
       }
 
-      if (action === 'TIME-OUT') {
-        lkNameSelect.dataset['TIME-OUT
+      const { iso, pht, date } = getPhilippineTime();
+      const data = {
+        Timestamp_ISO: iso,
+        Timestamp_PHT: pht,
+        Date: date,
+        Action: action,
+        Name: lkName,
+        Purpose: '',
+        LS: ls,
+        AOR: aor,
+        Whereabout: whereabout,
+        Output: output,
+        UserAgent: navigator.userAgent
+      };
+
+      try {
+        const resp = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const result = await resp.json();
+        alert(result.message || "Submitted!");
+      } catch (err) {
+        alert("Submission failed: " + err);
+      }
+
+      lastSync.textContent = "Last sync: " + pht;
+    }
+
+    timeInBtn.addEventListener('click', () => submitAttendance('TIME-IN'));
+    timeOutBtn.addEventListener('click', () => submitAttendance('TIME-OUT'));
+  </script>
+</body>
+</html>
