@@ -166,51 +166,47 @@ button {
       return { iso: now.toISOString(), pht, date: pht.split(',')[0] };
     }
 
-    async function submitAttendance(action) {
-      const lkName = lkNameSelect.value;
-      const ls = lsInput.value.trim();
-      const aor = aorInput.value.trim();
-      const whereabout = whereaboutInput.value.trim();
-      const output = outputInput.value.trim();
+ async function submitAttendance(action) {
+  const lkName = lkNameSelect.value;
+  const ls = lsInput.value.trim();
+  const aor = aorInput.value.trim();
+  const whereabout = whereaboutInput.value.trim();
+  const output = outputInput.value.trim();
 
-      if (!lkName || !ls || !aor) {
-        alert("Please complete all required fields.");
-        return;
-      }
+  if (!lkName || !ls || !aor) {
+    alert("Please complete all required fields.");
+    return;
+  }
 
-      const { iso, pht, date } = getPhilippineTime();
-      const data = {
-        Timestamp_ISO: iso,
-        Timestamp_PHT: pht,
-        Date: date,
-        Action: action,
-        Name: lkName,
-        Purpose: '',
-        LS: ls,
-        AOR: aor,
-        Whereabout: whereabout,
-        Output: output,
-        UserAgent: navigator.userAgent
-      };
-fetch(SCRIPT_URL, {
-  method: 'POST',
-  body: JSON.stringify(data),
-  headers: { 'Content-Type': 'application/json' }
-})
-      try {
-        const resp = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: { 'Content-Type': 'application/json' }
-        });
-        const result = await resp.json();
-        alert(result.message || "Submitted!");
-      } catch (err) {
-        alert("Submission failed: " + err);
-      }
+  const { iso, pht, date } = getPhilippineTime();
+  const data = {
+    Timestamp_ISO: iso,
+    Timestamp_PHT: pht,
+    Date: date,
+    Action: action,
+    Name: lkName,
+    Purpose: '',
+    LS: ls,
+    AOR: aor,
+    Whereabout: whereabout,
+    Output: output,
+    UserAgent: navigator.userAgent
+  };
 
-      lastSync.textContent = "Last sync: " + pht;
-    }
+  try {
+    const resp = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const result = await resp.json();
+    alert(result.message || "Submitted!");
+  } catch (err) {
+    alert("Submission failed: " + err);
+  }
+
+  lastSync.textContent = "Last sync: " + pht;
+}
 
     timeInBtn.addEventListener('click', () => submitAttendance('TIME-IN'));
     timeOutBtn.addEventListener('click', () => submitAttendance('TIME-OUT'));
