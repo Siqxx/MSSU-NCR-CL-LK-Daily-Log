@@ -108,7 +108,7 @@
       <div class="row parameters">
         <div>
           <label for="lkName">Name of LK</label><br>
-          <select id="lkName">
+          <select id="lkName" required>
             <option value="">-- choose name --</option>
             <option value="LK2 Eduardo Santos">LK2 Eduardo Santos</option>
             <option value="LK2 Julius L Galang">LK2 Julius L Galang</option>
@@ -132,11 +132,11 @@
         </div>
         <div>
           <label for="whereabout">LK Whereabout</label><br>
-          <input type="text" id="whereabout" placeholder="e.g. On duty at Corregidor">
+          <input type="text" id="whereabout" placeholder="e.g. On duty at Corregidor" required>
         </div>
         <div>
           <label for="output">Today's Output</label><br>
-          <input type="text" id="output" placeholder="e.g. Maintenance completed, report submitted">
+          <input type="text" id="output" placeholder="e.g. Maintenance completed, report submitted" required>
         </div>
       </div>
 
@@ -188,8 +188,9 @@
       const whereabout = whereaboutInput.value.trim();
       const output = outputInput.value.trim();
 
-      if (!lkName || !ls || !aor) {
-        statusMessage.textContent = "⚠️ Please complete all required fields.";
+      // ✅ Check all fields
+      if (!lkName || !ls || !aor || !whereabout || !output) {
+        statusMessage.textContent = "⚠️ Please complete all fields before submitting.";
         statusMessage.style.color = "red";
         statusMessage.classList.remove("hiddenMessage");
         return;
